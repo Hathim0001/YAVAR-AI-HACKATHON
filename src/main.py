@@ -12,7 +12,7 @@ from output import save_outputs
 poppler_path = r"C:\Users\Mohammed Hathim\Downloads\poppler\Library\bin"
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-input_dir = os.path.join(base_dir, "pdfs", "input")
+input_dir = os.path.join(base_dir, "pdfs", "samples")
 output_dir = os.path.join(base_dir, "pdfs", "output")
 
 

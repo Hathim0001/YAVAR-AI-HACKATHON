@@ -1,0 +1,48 @@
+{
+    "field_verification": {
+        "invoice_number": {
+            "confidence": 0.9354248366013072,
+            "present": true
+        },
+        "invoice_date": {
+            "confidence": 0.9354248366013072,
+            "present": false
+        },
+        "supplier_gst_number": {
+            "confidence": 0.9354248366013072,
+            "present": false
+        },
+        "bill_to_gst_number": {
+            "confidence": 0.9354248366013072,
+            "present": false
+        },
+        "po_number": {
+            "confidence": 0.9354248366013072,
+            "present": false
+        },
+        "shipping_address": {
+            "confidence": 0.9354248366013072,
+            "present": false
+        },
+        "seal_and_sign_present": {
+            "confidence": 0.9354248366013072,
+            "present": true
+        }
+    },
+    "line_items_verification": [
+        {
+            "row": "7",
+            "line_total_check": {
+                "calculated_value": 0.0,
+                "extracted_value": 0,
+                "check_passed": true
+            }
+        }
+    ],
+    "total_calculations_verification": {
+        "subtotal_check": {
+            "calculated_value": 0,
+            "check_passed": true
+        }
+    }
+}
