@@ -1,10 +1,9 @@
 import re
 
-def parse_invoice_data(extracted_data):
+def parse_invoice_data(text):
+    """Parse the extracted text to get structured invoice data."""
     invoice_data = {}
-    # Combine text from all pages
-    text = "\n".join([data[0] for data in extracted_data])
-
+    
     # Define regex patterns for general fields
     fields = {
         "invoice_number": r"Invoice\s*(No|Number)\.?\s*[:\-]?\s*(\w+)",
@@ -14,28 +13,44 @@ def parse_invoice_data(extracted_data):
         "po_number": r"PO\s*Number\s*[:\-]?\s*(\w+)",
         "shipping_address": r"Shipping\s*Address\s*[:\-]?\s*(.+?)(?=\n|$)",
     }
-
+    
     # Extract general fields
     for field, pattern in fields.items():
         match = re.search(pattern, text, re.IGNORECASE)
-        invoice_data[field] = match.group(1 if field != "invoice_number" else 2) if match else "N/A"
-
+        if match:
+            invoice_data[field] = match.group(1 if field != "invoice_number" else 2)
+        else:
+            invoice_data[field] = "N/A"
+    
     # Extract table contents
     table_data = []
     lines = text.split("\n")
     for line in lines:
-        if re.match(r"^\d+\s+", line):  # Assuming rows start with a number
+        if re.match(r"^\d+\s+", line):  # Assuming table rows start with a number
             parts = line.split()
             if len(parts) >= 5:  # Ensure enough parts for table fields
-                row = {
-                    "serial_number": parts[0] if parts[0].isdigit() else "N/A",
-                    "description": " ".join(parts[1:-4]) if len(parts) > 5 else parts[1],
-                    "hsn_sac": parts[-4],
-                    "quantity": float(parts[-3]) if parts[-3].replace(".", "").isdigit() else 0,
-                    "unit_price": float(parts[-2]) if parts[-2].replace(".", "").isdigit() else 0,
-                    "total_amount": float(parts[-1]) if parts[-1].replace(".", "").isdigit() else 0
-                }
-                table_data.append(row)
+                row = parse_table_line(parts)
+                if row:
+                    table_data.append(row)
     invoice_data["table_contents"] = table_data
     invoice_data["no_items"] = len(table_data)
     return invoice_data
+
+def parse_table_line(parts):
+    """Parse a single table line into a dictionary."""
+    if len(parts) < 5:
+        return None
+    serial_number = parts[0] if parts[0].isdigit() else "N/A"
+    total_amount = parts[-1] if parts[-1].replace('.', '', 1).isdigit() else "N/A"
+    unit_price = parts[-2] if parts[-2].replace('.', '', 1).isdigit() else "N/A"
+    quantity = parts[-3] if parts[-3].replace('.', '', 1).isdigit() else "N/A"
+    hsn_sac = parts[-4]
+    description = " ".join(parts[1:-4]) if len(parts) > 5 else parts[1]
+    return {
+        "serial_number": serial_number,
+        "description": description,
+        "hsn_sac": hsn_sac,
+        "quantity": float(quantity) if quantity != "N/A" else 0,
+        "unit_price": float(unit_price) if unit_price != "N/A" else 0,
+        "total_amount": float(total_amount) if total_amount != "N/A" else 0
+    }
