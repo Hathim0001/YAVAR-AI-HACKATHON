@@ -18,8 +18,8 @@ def parse_invoice_data(text):
         "invoice_date": r"(?:Invoice\s*)?Date\s*[:\-]?\s*(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2}|\d{2}\s+[A-Za-z]+\s+\d{4}|[A-Za-z]+\s+\d{1,2},\s+\d{4})",
         "supplier_gst_number": r"(?:Supplier|Vendor)\s*GST(?:IN)?\s*[:\-]?\s*([\w\d]+)",
         "bill_to_gst_number": r"(?:Bill\s*To|Customer)\s*GST(?:IN)?\s*[:\-]?\s*([\w\d]+)",
-        "po_number": r"(?:PO|Purchase\s*Order|Order)\s*(?:No|Number|#|ID)?\.?\s*[:\-]?\s*(\w+)(?!\s*SWIFT)",  # Avoid matching SWIFT code
-        "shipping_address": r"(?:Ship\s*To|Shipping\s*Address|Deliver\s*To|Bill\s*To|Customer\s*Name\s*\n)([\s\S]+?)(?=\n\n|$)",  # Capture address after Customer Name
+        "po_number": r"(?:PO|Purchase\s*Order|Order)\s*(?:No|Number|#|ID)?\.?\s*[:\-]?\s*(?!.*SWIFT)(\w+)",  # Exclude SWIFT in the match
+        "shipping_address": r"(?:Ship\s*To|Shipping\s*Address|Deliver\s*To|Bill\s*To|Customer\s*Name\s*)([\s\S]+?)(?=\n\s*\n|$)",  # More flexible with newlines
     }
     
     # Extract each field using its regex pattern
@@ -28,7 +28,6 @@ def parse_invoice_data(text):
         invoice_data[field] = match.group(1).strip() if match else "N/A"
     
     # Define regex pattern for table rows
-    # Matches: Description, From, Until, Amount (no serial number or quantity)
     table_pattern = r"^(.*?)\s+(Nov\s+\d{2},\s+\d{4})\s+(Nov\s+\d{2},\s+\d{4})\s+(?:USD\s+)?[\$]?\d+\.\d{2}\s*$"
     table_data = []
     
@@ -40,22 +39,19 @@ def parse_invoice_data(text):
             description = match.group(1).strip()
             from_date = match.group(2)
             until_date = match.group(3)
-            # Extract amount (last part of the line)
             amount = re.search(r"(?:USD\s+)?[\$]?\d+\.\d{2}", line).group(0)
             amount_value = float(re.sub(r'[^\d.]', '', amount))
             
-            # Structure the row data (assume quantity = 1 since not specified)
             row = {
-                "serial_number": "N/A",  # No serial number in this invoice
+                "serial_number": "N/A",
                 "description": f"{description} (From: {from_date}, Until: {until_date})",
-                "hsn_sac": "N/A",  # Not present in the invoice
-                "quantity": 1.0,   # Assume 1 since not specified
+                "hsn_sac": "N/A",
+                "quantity": 1.0,
                 "unit_price": amount_value,
                 "total_amount": amount_value
             }
             table_data.append(row)
     
-    # Add table data and item count to the invoice data
     invoice_data["table_contents"] = table_data
     invoice_data["no_items"] = len(table_data)
     
@@ -63,7 +59,6 @@ def parse_invoice_data(text):
 
 # Example usage
 if __name__ == "__main__":
-    # Sample invoice text (based on index.pdf)
     sample_text = """
     INVOICE
 

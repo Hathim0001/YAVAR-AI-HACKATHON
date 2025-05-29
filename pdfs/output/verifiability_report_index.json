@@ -22,7 +22,7 @@
         },
         "shipping_address": {
             "confidence": 0.9354248366013072,
-            "present": false
+            "present": true
         },
         "seal_and_sign_present": {
             "confidence": 0.9354248366013072,
