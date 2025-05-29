@@ -1,0 +1,11 @@
+{
+    "invoice_number": "N/A",
+    "invoice_date": "N/A",
+    "supplier_gst_number": "N/A",
+    "bill_to_gst_number": "N/A",
+    "po_number": "N/A",
+    "shipping_address": "N/A",
+    "table_contents": [],
+    "no_items": 0,
+    "seal_and_sign_present": true
+}

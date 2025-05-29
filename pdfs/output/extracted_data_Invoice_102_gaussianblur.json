@@ -1,0 +1,20 @@
+{
+    "invoice_number": "N/A",
+    "invoice_date": "N/A",
+    "supplier_gst_number": "N/A",
+    "bill_to_gst_number": "N/A",
+    "po_number": "N/A",
+    "shipping_address": "N/A",
+    "table_contents": [
+        {
+            "serial_number": "1",
+            "description": "pawn tpempem",
+            "hsn_sac": "\u2018be",
+            "quantity": 0,
+            "unit_price": 0,
+            "total_amount": 0
+        }
+    ],
+    "no_items": 1,
+    "seal_and_sign_present": true
+}
