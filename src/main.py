@@ -9,8 +9,8 @@ from verification import perform_verifiability_checks
 from output import save_outputs
 
 # Define input and output directories (relative to src/)
-input_dir = "D:/YAVAR-AI-HACKATHON/input_pdfs/"
-output_dir = "D:/YAVAR-AI-HACKATHON/input_pdfs/"
+input_dir = "../YAVAR-AI-HACKATHON/input_pdfs/"
+output_dir = "../YAVAR-AI-HACKATHON/output/"
 
 # Check if input directory exists
 if not os.path.exists(input_dir):
