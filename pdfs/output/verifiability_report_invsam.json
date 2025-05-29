@@ -2,7 +2,7 @@
     "field_verification": {
         "invoice_number": {
             "confidence": 0.7663095238095238,
-            "present": false
+            "present": true
         },
         "invoice_date": {
             "confidence": 0.7663095238095238,

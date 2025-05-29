@@ -4,7 +4,7 @@ import numpy as np
 from pdf2image import convert_from_path
 from preprocess import preprocess_image
 from ocr import extract_text_with_confidence
-from parser import parse_invoice_data
+from invoice_parser import parse_invoice_data
 from verification import perform_verifiability_checks
 from output import save_outputs
 

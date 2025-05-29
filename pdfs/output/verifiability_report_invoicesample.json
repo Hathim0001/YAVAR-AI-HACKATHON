@@ -2,7 +2,7 @@
     "field_verification": {
         "invoice_number": {
             "confidence": 0.9272916666666667,
-            "present": false
+            "present": true
         },
         "invoice_date": {
             "confidence": 0.9272916666666667,
@@ -29,19 +29,10 @@
             "present": true
         }
     },
-    "line_items_verification": [
-        {
-            "row": "123",
-            "line_total_check": {
-                "calculated_value": 0,
-                "extracted_value": 3000.0,
-                "check_passed": false
-            }
-        }
-    ],
+    "line_items_verification": [],
     "total_calculations_verification": {
         "subtotal_check": {
-            "calculated_value": 3000.0,
+            "calculated_value": 0,
             "check_passed": true
         }
     }

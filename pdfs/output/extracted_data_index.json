@@ -1,18 +1,18 @@
 {
-    "invoice_number": "161126",
-    "invoice_date": "N/A",
+    "invoice_number": "an",
+    "invoice_date": "Nov 26, 2016",
     "supplier_gst_number": "N/A",
     "bill_to_gst_number": "N/A",
-    "po_number": "N/A",
+    "po_number": "stcode",
     "shipping_address": "N/A",
     "table_contents": [
         {
-            "serial_number": "7",
-            "description": "[",
-            "hsn_sac": "[",
-            "quantity": 39.0,
-            "unit_price": 0,
-            "total_amount": 0
+            "serial_number": "N/A",
+            "description": "Prince Upgrades & Support (From: Nov 26, 2016, Until: Nov 26, 2017)",
+            "hsn_sac": "N/A",
+            "quantity": 1.0,
+            "unit_price": 950.0,
+            "total_amount": 950.0
         }
     ],
     "no_items": 1,
