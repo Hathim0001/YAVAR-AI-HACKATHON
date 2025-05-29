@@ -1,5 +1,5 @@
+opencv-python
 pytesseract
 pdf2image
 pandas
 openpyxl
-opencv-python

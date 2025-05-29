@@ -1,10 +1,10 @@
 {
-    "invoice_number": "12345",
+    "invoice_number": "to",
     "invoice_date": "01/02/2025",
     "supplier_gst_number": "N/A",
     "bill_to_gst_number": "N/A",
     "po_number": "N/A",
-    "shipping_address": "N/A",
+    "shipping_address": "MonicaBelluca Invoice 12345\nSantaMaraOffice5thFloor Date 01/02/2025\nNewYorkCity\nO2344567-MonicaBellemail.com\nOl Aquarius 50.00 2 100.00\nO2 Gemini 50.00 2 100.00\nO03 Capricorn 50.00 2 100.00\nO4 Sagitarius 50.00 2 100.00\nO05 Cassiopeia 50.00 2 100.00\nTotal 180.00\nPaymenitInfo\nTax 0.00\nAccount O01-234-5567-889\nAccountName JonathanMarc\nBankDeitails DetailisHere AmountDue 3180.00\nTermsCondition\nAquariusisoneoftheoldest\nconstellations.Itsname\nmeanswaterbearer,and\nitssymbolisa AuthorisedSign\n2Seae 9elSt. Painyemiallicor",
     "table_contents": [],
     "no_items": 0,
     "seal_and_sign_present": false

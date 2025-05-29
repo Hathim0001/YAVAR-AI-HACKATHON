@@ -1,28 +1,28 @@
 {
     "field_verification": {
         "invoice_number": {
-            "confidence": 0.7663095238095238,
+            "confidence": 0.7512000000000001,
             "present": true
         },
         "invoice_date": {
-            "confidence": 0.7663095238095238,
+            "confidence": 0.7512000000000001,
             "present": true
         },
         "supplier_gst_number": {
-            "confidence": 0.7663095238095238,
+            "confidence": 0.7512000000000001,
             "present": false
         },
         "bill_to_gst_number": {
-            "confidence": 0.7663095238095238,
+            "confidence": 0.7512000000000001,
             "present": false
         },
         "po_number": {
-            "confidence": 0.7663095238095238,
+            "confidence": 0.7512000000000001,
             "present": false
         },
         "shipping_address": {
-            "confidence": 0.7663095238095238,
-            "present": false
+            "confidence": 0.7512000000000001,
+            "present": true
         },
         "seal_and_sign_present": {
             "confidence": 0,

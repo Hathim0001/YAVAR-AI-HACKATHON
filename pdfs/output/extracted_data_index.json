@@ -1,20 +1,11 @@
 {
-    "invoice_number": "an",
-    "invoice_date": "Nov 26, 2016",
+    "invoice_number": "date",
+    "invoice_date": "N/A",
     "supplier_gst_number": "N/A",
     "bill_to_gst_number": "N/A",
-    "po_number": "stcode",
-    "shipping_address": "ABN 32 101 193 560\nStreet",
-    "table_contents": [
-        {
-            "serial_number": "N/A",
-            "description": "Prince Upgrades & Support (From: Nov 26, 2016, Until: Nov 26, 2017)",
-            "hsn_sac": "N/A",
-            "quantity": 1.0,
-            "unit_price": 950.0,
-            "total_amount": 950.0
-        }
-    ],
-    "no_items": 1,
+    "po_number": "steodeCiby",
+    "shipping_address": "ABN32LOL1023.560\nStreet\nPosteodeCiby\nCountry\nInvoicedate Nov26,2016\nInveicenumber LO1L26\nPayimentdue 3odaysatlerinvoicedate\nDescription Prom Unul Amount\nPrinceUperadesSuppart Nov26,2010 Nov26,2017 UsDS050.00\nTotal UsDS950.00\nEET\nPleaselransteramountto\nBankaccountnaumes YesLogiePlyLid\nNaineofBank CommonsealthBankofAustraliaCCLAI\nBankStateBranchBS2 068010\nBankStateBranchBS2 068010\nBankStateBranchBS2 068010\nBankacecountnumber IBeol652\nBankSWIFTcode CTBAAULS\nBankaddress eerSwanstonSt,Melbourne,VIC3000,Australia\nTheBSBonaberidentitiesabranelofafineneialinstititioninAustealic.WhentrasterringmienesyteAustreliat,the\nBSBoinoaberisueedltasedierwiththebankaeeeutnunmtbertndtheSWIPTcede.AustreliinbanksdenetuseIBAN\nnonthers,\nywaveslooic.COM",
+    "table_contents": [],
+    "no_items": 0,
     "seal_and_sign_present": true
 }

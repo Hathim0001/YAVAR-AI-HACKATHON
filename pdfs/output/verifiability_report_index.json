@@ -1,47 +1,38 @@
 {
     "field_verification": {
         "invoice_number": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": true
         },
         "invoice_date": {
-            "confidence": 0.9354248366013072,
-            "present": true
+            "confidence": 0.4672222222222222,
+            "present": false
         },
         "supplier_gst_number": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": false
         },
         "bill_to_gst_number": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": false
         },
         "po_number": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": true
         },
         "shipping_address": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": true
         },
         "seal_and_sign_present": {
-            "confidence": 0.9354248366013072,
+            "confidence": 0.4672222222222222,
             "present": true
         }
     },
-    "line_items_verification": [
-        {
-            "row": "N/A",
-            "line_total_check": {
-                "calculated_value": 950.0,
-                "extracted_value": 950.0,
-                "check_passed": true
-            }
-        }
-    ],
+    "line_items_verification": [],
     "total_calculations_verification": {
         "subtotal_check": {
-            "calculated_value": 950.0,
+            "calculated_value": 0,
             "check_passed": true
         }
     }
