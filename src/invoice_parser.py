@@ -1,7 +1,6 @@
 import re
 import bisect
 import logging
-from ocr import detect_logo
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -10,6 +9,7 @@ def group_into_rows(elements, threshold=20):
     if not valid_elements:
         logging.warning("No elements with valid Y-coordinates found.")
         return []
+    
     sorted_elements = sorted(valid_elements, key=lambda e: e['y'])
     rows = []
     current_row = [sorted_elements[0]]
@@ -35,25 +35,31 @@ def define_regions(rows):
         "table": [],
         "footer": []
     }
+    
     regions["header"] = list(range(min(5, len(rows))))
+    
     for i, row in enumerate(rows):
         row_text = ' '.join([e['text'].lower() for e in row])
         if any(kw in row_text for kw in ["bill to", "ship to", "customer", "client", "seller", "attention to"]):
             break
         regions["vendor"].append(i)
+    
     customer_start = i
     for i in range(customer_start, len(rows)):
         row_text = ' '.join([e['text'].lower() for e in row])
         if any(kw in row_text for kw in ["description", "items", "no.", "qty", "item", "organic", "amount", "1.", "01"]):
             break
         regions["customer"].append(i)
+    
     table_start = i
     for i in range(table_start, len(rows)):
         row_text = ' '.join([e['text'].lower() for e in row])
         if any(kw in row_text for kw in ["summary", "total", "footer", "vat [%]", "subtotal", "gst", "sales tax", "total due"]):
             break
         regions["table"].append(i)
+    
     regions["footer"] = list(range(i, len(rows)))
+    
     return regions
 
 def find_table_header(rows, regions):
@@ -77,6 +83,7 @@ def parse_table(rows, header_row, header_keywords, start_index):
         "vat [%]": "vat",
         "um": "unit_measure"
     }
+    
     header_words = []
     for elem in header_row:
         for keyword in header_keywords:
@@ -84,18 +91,22 @@ def parse_table(rows, header_row, header_keywords, start_index):
                 header_words.append((elem, keyword))
                 break
     header_words.sort(key=lambda x: x[0]['x'])
+    
     centers = [(word[0]['x'] + word[0]['width'] / 2) for word in header_words]
     boundaries = [0] + [(centers[i] + centers[i+1]) / 2 for i in range(len(centers)-1)] + [10000]
+    
     table_data = []
     for row in rows[start_index + 1:]:
         row_text = ' '.join([e['text'].lower() for e in row])
         if any(kw in row_text for kw in ['total', 'subtotal', 'gst', 'discount', "summary", 'vat [%]', 'sales tax', 'total due']):
             break
+        
         columns = [[] for _ in range(len(header_words))]
         for elem in row:
             center_x = elem['x'] + elem['width'] / 2
             col_idx = min(max(0, bisect.bisect_left(boundaries, center_x) - 1), len(header_words) - 1)
             columns[col_idx].append(elem)
+        
         row_data = {}
         for i, (header_elem, keyword) in enumerate(header_words):
             field = header_mapping.get(keyword, keyword)
@@ -116,10 +127,13 @@ def parse_table(rows, header_row, header_keywords, start_index):
                 row_data[field] = float(vat_match.group(1)) if vat_match else 0.0
             else:
                 row_data[field] = col_text if col_text else "Not Found"
+        
         for field in ['serial_number', 'description', 'hsn_sac', 'quantity', 'unit_price', 'total_amount']:
             if field not in row_data:
                 row_data[field] = 0.0 if field in ['quantity', 'unit_price', 'total_amount'] else "Not Found"
+        
         table_data.append(row_data)
+    
     return table_data
 
 def extract_general_fields(rows, regions):
@@ -131,24 +145,30 @@ def extract_general_fields(rows, regions):
         "po_number": r"(?:po|purchase\s*order|order)\s*(?:no|number|#|id)\s*[:\-]?\s*([\w\d-]+)",
         "shipping_address": r"(?:bill\s*to|ship\s*to|customer\s*name\s*[:\s]*|client\s*[:\s]*|attention\s*to\s*)(.*?)(?=(?:invoice\s*(?:number|date)|description\s*from\s*until|items|no\.|tax\s*id|iban|abn|$))"
     }
+    
     fields = {}
     header_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["header"]])
     customer_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["customer"]])
     all_text = header_text + ' ' + customer_text
+    
     date_match = re.search(patterns["invoice_date"], header_text, re.IGNORECASE)
     if date_match:
         fields["invoice_date"] = next(group for group in date_match.groups() if group is not None).strip()
     else:
         fields["invoice_date"] = "Not Found"
+    
     inv_match = re.search(patterns["invoice_number"], header_text, re.IGNORECASE)
     if inv_match:
         fields["invoice_number"] = next(group for group in inv_match.groups() if group is not None).strip()
     else:
         fields["invoice_number"] = "Not Found"
+    
     supplier_gst_match = re.search(patterns["supplier_gst_number"], all_text, re.IGNORECASE)
     fields["supplier_gst_number"] = supplier_gst_match.group(1).strip() if supplier_gst_match else "Not Found"
+    
     bill_to_gst_match = re.search(patterns["bill_to_gst_number"], all_text, re.IGNORECASE)
     fields["bill_to_gst_number"] = bill_to_gst_match.group(1).strip() if bill_to_gst_match else "Not Found"
+    
     for field in ["po_number", "shipping_address"]:
         match = re.search(patterns[field], all_text, re.IGNORECASE | re.DOTALL)
         if match:
@@ -157,6 +177,7 @@ def extract_general_fields(rows, regions):
                 fields[field] = re.sub(r'(?:seller|vendor|johnson\s*plc|tax\s*id\s*[:\s]*[\d-]+|iban\s*[:\s]*.*?$|abn\s*[\d\s]+)', '', fields[field], flags=re.IGNORECASE).strip()
         else:
             fields[field] = "Not Found"
+    
     return fields
 
 def extract_vendor_customer_info(rows, regions):
@@ -170,19 +191,24 @@ def extract_vendor_customer_info(rows, regions):
         "customer_name": "Not Found",
         "address": []
     }
+    
     vendor_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["vendor"]])
     company_pattern = r"(?:[A-Za-z\s]+\s*(?:Pty\. Ltd\.|Inc\.|LLC|PLC|WOODWORK))|(?:[A-Za-z\s]+Equipment)"
     phone_pattern = r"(?:\+\d{1,3}\s*)?(?:\d{1,4}[\s-])?\d{3}[\s-]\d{3}[\s-]\d{4}|\d{10}|\(\d{2,3}\)\s*\d{7,8}"
     website_pattern = r"www\.[a-zA-Z0-9]+\.[a-zA-Z]{2,}|(?:[a-zA-Z0-9]+\.)*(?:com|org|net)"
+    
     company_match = re.search(company_pattern, vendor_text, re.IGNORECASE)
     if company_match:
         vendor_info["company_name"] = company_match.group().strip()
+    
     phone_match = re.search(phone_pattern, vendor_text)
     if phone_match:
         vendor_info["phone"] = phone_match.group()
+    
     website_match = re.search(website_pattern, vendor_text)
     if website_match:
         vendor_info["website"] = website_match.group()
+    
     address_lines = []
     for i in regions["vendor"]:
         row_text = ' '.join([e['text'] for e in rows[i]])
@@ -190,12 +216,14 @@ def extract_vendor_customer_info(rows, regions):
             if vendor_info["company_name"] not in row_text and vendor_info["website"] not in row_text and vendor_info["phone"] not in row_text:
                 address_lines.append(row_text.strip())
     vendor_info["address"] = address_lines if address_lines else ["Not Found"]
+    
     customer_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["customer"]])
     customer_name_pattern = r"(?:bill\s*to|ship\s*to|customer\s*name\s*[:\s]*|client\s*[:\s]*|attention\s*to\s*)([A-Za-z\s-]+?)(?=\s*(?:tax\s*id|address|\d{3,}|$))"
     customer_name_match = re.search(customer_name_pattern, customer_text, re.IGNORECASE)
     if customer_name_match:
         full_name = customer_name_match.group(1).strip()
         customer_info["customer_name"] = full_name.replace('Seller:', '').replace('Client:', '').replace('Johnson PLC', '').strip()
+    
     customer_address = []
     for i in regions["customer"]:
         row_text = ' '.join([e['text'] for e in rows[i]])
@@ -204,6 +232,7 @@ def extract_vendor_customer_info(rows, regions):
         if row_text.strip() and not re.search(r"(?:seller|client|attention\s*to)", row_text.lower()):
             customer_address.append(row_text.strip())
     customer_info["address"] = customer_address if customer_address else ["Not Found"]
+    
     return vendor_info, customer_info
 
 def extract_additional_info(rows, regions):
@@ -211,11 +240,14 @@ def extract_additional_info(rows, regions):
         "payment_terms": "Not Found",
         "bank_details": {}
     }
+    
     footer_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["footer"]])
+    
     payment_terms_pattern = r"payment\s*due\s*[:\s]*(.*?)(?=\s*(?:description|total|bank|$))"
     payment_match = re.search(payment_terms_pattern, footer_text, re.IGNORECASE)
     if payment_match:
         additional_info["payment_terms"] = payment_match.group(1).strip()
+    
     bank_patterns = {
         "account_name": r"(?:account\s*name|bank\s*account\s*name)[:\s]*(.*?)(?=\s*(?:bank\s*name|bsb|$))",
         "bank_name": r"(?:bank\s*name|name\s*of\s*bank|bank\s*details)[:\s]*(.*?)(?=\s*(?:bsb|account\s*number|bank\s*address|$))",
@@ -223,10 +255,12 @@ def extract_additional_info(rows, regions):
         "swift_code": r"swift\s*code[:\s]*([A-Z0-9]+)",
         "iban": r"iban\s*[:\s]*([A-Z0-9]+)"
     }
+    
     bank_details = {}
     for key, pattern in bank_patterns.items():
         match = re.search(pattern, footer_text, re.IGNORECASE)
         bank_details[key] = match.group(1).strip() if match else "Not Found"
+    
     additional_info["bank_details"] = bank_details
     return additional_info
 
@@ -238,12 +272,14 @@ def extract_totals(rows, table_contents, regions):
         "final_total": r"(?:total|grand total|amount due|final amount|total due)\s*[:\-]?\s*([A-Za-z\s]*\$[\d.,]+|[\d.,]+)",
         "summary_totals": r"vat\s*\[\%\]\s*net\s*worth\s*vat\s*gross\s*worth\s*(\d+)%\s*([\d.,]+)\s*([\d.,]+)\s*([\d.,]+)|(\d+)%\s*([\d.,]+)\s*([\d.,]+)\s*([\d.,]+)"
     }
+    
     totals = {}
     totals['subtotal'] = 0.0
     totals['gst'] = 0.0
     totals['discount'] = 0.0
     totals['final_total'] = 0.0
     totals['summary_totals'] = 0.0
+    
     if table_contents:
         subtotal = sum(item.get('net_worth', item.get('total_amount', 0.0)) for item in table_contents)
         totals['subtotal'] = subtotal
@@ -252,6 +288,7 @@ def extract_totals(rows, table_contents, regions):
             if 'vat' in item and 'net_worth' in item:
                 gst += (item['vat'] / 100) * item['net_worth']
         totals['gst'] = round(gst, 2)
+    
     text_after_table = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["footer"]])
     for field, pattern in total_patterns.items():
         match = re.search(pattern, text_after_table, re.IGNORECASE)
@@ -268,11 +305,13 @@ def extract_totals(rows, table_contents, regions):
                 except ValueError as e:
                     logging.warning(f"Failed to convert total '{field}' value '{value}': {str(e)}")
                     totals[field] = 0.0
+    
     if totals['final_total'] == 0.0 and table_contents:
         totals['final_total'] = totals['subtotal'] + totals['gst'] - totals.get('discount', 0.0)
+    
     return totals
 
-def parse_invoice_data(all_elements, image, pdf_name, output_dir):
+def parse_invoice_data(all_elements):
     invoice_data = {
         "general_information": {},
         "vendor_information": {},
@@ -282,25 +321,29 @@ def parse_invoice_data(all_elements, image, pdf_name, output_dir):
         "totals": {},
         "additional_information": {}
     }
-    logo_detected, logo_path = detect_logo(image, output_dir, pdf_name)
+    
     for page_elements in all_elements:
         rows = group_into_rows(page_elements)
         regions = define_regions(rows)
+        
         if not invoice_data["general_information"]:
             invoice_data["general_information"] = extract_general_fields(rows, regions)
-            invoice_data["general_information"]["seal_and_sign_present"] = logo_detected
-            if logo_detected:
-                invoice_data["general_information"]["logo_path"] = logo_path
+            invoice_data["general_information"]["seal_and_sign_present"] = False
+        
         vendor_info, customer_info = extract_vendor_customer_info(rows, regions)
         invoice_data["vendor_information"] = vendor_info
         invoice_data["customer_information"] = customer_info
+        
         invoice_data["additional_information"] = extract_additional_info(rows, regions)
+        
         table_start_index, header_row, header_keywords = find_table_header(rows, regions)
         if table_start_index is not None:
             table_data = parse_table(rows, header_row, header_keywords, table_start_index)
             invoice_data["table_contents"].extend(table_data)
         else:
             logging.warning("No table header found on this page.")
+        
         invoice_data["totals"].update(extract_totals(rows, invoice_data["table_contents"], regions))
+    
     invoice_data["no_items"] = len(invoice_data["table_contents"])
     return invoice_data

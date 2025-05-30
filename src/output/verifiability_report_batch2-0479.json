@@ -5,7 +5,7 @@
             "present": false
         },
         "invoice_date": {
-            "confidence": 0.94,
+            "confidence": 0.9,
             "present": true
         },
         "supplier_gst_number": {

@@ -6,8 +6,7 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Friedman and Sons Harris-Colon 233 Carla Oval Apt. 040 9105 Miller Parks : Client: Friedman and Sons Harris-Colon 233 Carla Oval Apt. 040 9105 Miller Parks North Scott, MT 48559 Lake Gabrielberg, IA 96027",
-        "seal_and_sign_present": true,
-        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch2-0996_logo.png"
+        "seal_and_sign_present": false
     },
     "vendor_information": {
         "company_name": "Not Found",

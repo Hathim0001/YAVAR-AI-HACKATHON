@@ -1,11 +1,11 @@
 {
     "field_verification": {
         "invoice_number": {
-            "confidence": 0.96,
+            "confidence": 0.9,
             "present": true
         },
         "invoice_date": {
-            "confidence": 0.95,
+            "confidence": 0.9,
             "present": true
         },
         "supplier_gst_number": {
@@ -21,7 +21,7 @@
             "present": false
         },
         "shipping_address": {
-            "confidence": 0.95,
+            "confidence": 0.9,
             "present": true
         },
         "subtotal": {

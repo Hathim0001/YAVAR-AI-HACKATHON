@@ -6,8 +6,7 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Not Found",
-        "seal_and_sign_present": true,
-        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\index_logo.png"
+        "seal_and_sign_present": false
     },
     "vendor_information": {
         "company_name": "YesLogic Pty. Ltd.",

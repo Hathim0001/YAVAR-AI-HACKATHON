@@ -19,61 +19,63 @@ def extract_text_with_positions(image):
                 x = data['left'][i]
                 y = data['top'][i]
                 if text and x is not None and y is not None and isinstance(x, (int, float)) and isinstance(y, (int, float)):
-                    element = {
-                        'text': text,
-                        'x': int(x),
-                        'y': int(y),
-                        'width': data['width'][i],
-                        'height': data['height'][i],
-                        'confidence': float(data['conf'][i]) / 100.0
-                    }
+                    element = {'text': text, 'x': int(x), 'y': int(y), 'width': data['width'][i], 'height': data['height'][i], 'confidence': float(data['conf'][i]) / 100.0}
                     elements.append(element)
         return elements
     except Exception as e:
         print(f"OCR Error: {str(e)}")
         return []
 
-def detect_logo(image, output_dir, pdf_name, ocr_elements=None):
+def detect_seal_signature(image, output_dir, pdf_name, ocr_elements=None):
     try:
         if isinstance(image, Image.Image):
             image = np.array(image)
         if len(image.shape) == 3 and image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY_INV)
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
         if ocr_elements:
             mask = np.ones_like(thresh) * 255
             for elem in ocr_elements:
                 x, y, w, h = elem['x'], elem['y'], elem['width'], elem['height']
                 cv2.rectangle(mask, (x, y), (x + w, y + h), 0, -1)
-            kernel = np.ones((15, 15), np.uint8)
-            mask = cv2.dilate(mask, kernel, iterations=3)
+            kernel = np.ones((10, 10), np.uint8)
+            mask = cv2.dilate(mask, kernel, iterations=2)
             thresh = cv2.bitwise_and(thresh, mask)
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        red_lower1 = np.array([0, 70, 50])
+        red_upper1 = np.array([10, 255, 255])
+        red_lower2 = np.array([170, 70, 50])
+        red_upper2 = np.array([180, 255, 255])
+        blue_lower = np.array([100, 50, 50])
+        blue_upper = np.array([140, 255, 255])
+        red_mask1 = cv2.inRange(hsv, red_lower1, red_upper1)
+        red_mask2 = cv2.inRange(hsv, red_lower2, red_upper2)
+        blue_mask = cv2.inRange(hsv, blue_lower, blue_upper)
+        color_mask = cv2.bitwise_or(red_mask1, red_mask2)
+        color_mask = cv2.bitwise_or(color_mask, blue_mask)
+        combined_thresh = cv2.bitwise_or(thresh, color_mask)
+        kernel = np.ones((5, 5), np.uint8)
+        combined_thresh = cv2.morphologyEx(combined_thresh, cv2.MORPH_CLOSE, kernel)
         height, width = gray.shape
-        top_height = int(height * 0.2)
-        corner_width = int(width * 0.2)
-        regions = [
-            (thresh[0:top_height, 0:corner_width], 0, 0),
-            (thresh[0:top_height, width - corner_width:width], width - corner_width, 0)
-        ]
-        logo_detected = False
-        logo_image = None
-        output_path = None
-        for idx, (region, x_offset, y_offset) in enumerate(regions):
-            contours, _ = cv2.findContours(region, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            for contour in contours:
-                x, y, w, h = cv2.boundingRect(contour)
-                area = w * h
-                aspect_ratio = w / h if h > 0 else 0
-                if 1000 < area < (top_height * corner_width * 0.5) and 0.5 < aspect_ratio < 2.0:
-                    logo_image = image[y_offset + y:y_offset + y + h, x_offset + x:x_offset + x + w]
-                    logo_detected = True
-                    output_path = os.path.join(output_dir, f"{pdf_name}_logo.png")
-                    cv2.imwrite(output_path, logo_image)
-                    break
-            if logo_detected:
-                break
-        return logo_detected, output_path if logo_detected else None
+        contours, _ = cv2.findContours(combined_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        max_area = height * width * 0.15
+        min_area = 300
+        largest_element = None
+        largest_area = 0
+        for contour in contours:
+            x, y, w, h = cv2.boundingRect(contour)
+            area = w * h
+            if min_area < area < max_area and area > largest_area:
+                largest_area = area
+                largest_element = {'x': x, 'y': y, 'width': w, 'height': h}
+        if largest_element:
+            x, y, w, h = largest_element['x'], largest_element['y'], largest_element['width'], largest_element['height']
+            element_image = image[y:y + h, x:x + w]
+            output_path = os.path.join(output_dir, f"{pdf_name}_seal_signature.png")
+            cv2.imwrite(output_path, element_image)
+            return True, output_path
+        return False, None
     except Exception as e:
-        print(f"Logo Detection Error: {str(e)}")
+        print(f"Seal/Signature Detection Error: {str(e)}")
         return False, None

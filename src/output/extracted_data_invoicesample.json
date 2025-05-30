@@ -6,8 +6,7 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Denny Gunawan \u2014 221 Queen St d Loren um dolor sit amet. \u00a2 ing mag scelerisque / r rsus, erat ales Total $39.60",
-        "seal_and_sign_present": true,
-        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\invoicesample_logo.png"
+        "seal_and_sign_present": false
     },
     "vendor_information": {
         "company_name": "Not Found",
