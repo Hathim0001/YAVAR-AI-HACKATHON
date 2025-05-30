@@ -5,7 +5,6 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def group_into_rows(elements, threshold=20):
-    """Group text elements into rows based on Y-coordinates."""
     valid_elements = [elem for elem in elements if 'y' in elem and isinstance(elem['y'], (int, float))]
     if not valid_elements:
         logging.warning("No elements with valid Y-coordinates found.")
@@ -29,7 +28,6 @@ def group_into_rows(elements, threshold=20):
     return rows
 
 def define_regions(rows):
-    """Define regions of the invoice for spatial analysis."""
     regions = {
         "header": [],
         "vendor": [],
@@ -65,18 +63,16 @@ def define_regions(rows):
     return regions
 
 def find_table_header(rows, regions):
-    """Identify the table header row based on keywords within the table region."""
     header_keywords = ["description", "item", "quantity", "qty", "price", "rate", "amount", "total", "hsn/sac", "s.no", "sl.no", "no.", "product", "net price", "net worth", "gross", "subtotal", "um", "vat [%]"]
     for i in regions["table"]:
         row = rows[i]
         row_text = ' '.join([e['text'].lower() for e in row])
         keyword_count = sum(1 for kw in header_keywords if kw in row_text.replace(" ", ""))
-        if keyword_count >= 1:  # Lowered threshold
+        if keyword_count >= 1:
             return i, row, header_keywords
     return None, None, None
 
 def parse_table(rows, header_row, header_keywords, start_index):
-    """Parse table rows into structured data based on column positions."""
     header_mapping = {
         "s.no": "serial_number", "sl.no": "serial_number", "no.": "serial_number",
         "description": "description", "item": "description", "organic items": "description",
@@ -102,7 +98,7 @@ def parse_table(rows, header_row, header_keywords, start_index):
     table_data = []
     for row in rows[start_index + 1:]:
         row_text = ' '.join([e['text'].lower() for e in row])
-        if any(kw in row_text for kw in ['total', 'subtotal', 'gst', 'discount', 'summary', 'vat [%]', 'sales tax', 'total due']):
+        if any(kw in row_text for kw in ['total', 'subtotal', 'gst', 'discount', "summary", 'vat [%]', 'sales tax', 'total due']):
             break
         
         columns = [[] for _ in range(len(header_words))]
@@ -141,7 +137,6 @@ def parse_table(rows, header_row, header_keywords, start_index):
     return table_data
 
 def extract_general_fields(rows, regions):
-    """Extract general fields from rows in the header and customer regions."""
     patterns = {
         "invoice_number": r"(?:invoice\s*(?:number|#|no\.?|no\s*:))\s*[:\s#]*([\w\d-]+)|no\s*:\s*([\d]{8})|([\d]{8})",
         "invoice_date": r"(?:invoice\s*)?date\s*[:\s]*(?:\s*of\s*issue\s*[:\s]*)?(\w+\s+\d{1,2},\s+\d{4})|date\s*(?:of issue\s*)?[:\s]*(\d{2}/\d{2}/\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}-\d{2}-\d{4})|(\d{2}\s+\w+\s+\d{4})|(\d{2}\.\d{2}\.\d{4})|(\d{2}/\d{2}/\d{2})",
@@ -156,7 +151,6 @@ def extract_general_fields(rows, regions):
     customer_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["customer"]])
     all_text = header_text + ' ' + customer_text
     
-    # Invoice date from header only
     date_match = re.search(patterns["invoice_date"], header_text, re.IGNORECASE)
     if date_match:
         fields["invoice_date"] = next(group for group in date_match.groups() if group is not None).strip()
@@ -169,7 +163,6 @@ def extract_general_fields(rows, regions):
     else:
         fields["invoice_number"] = "Not Found"
     
-    # Capture supplier and bill-to GST numbers
     supplier_gst_match = re.search(patterns["supplier_gst_number"], all_text, re.IGNORECASE)
     fields["supplier_gst_number"] = supplier_gst_match.group(1).strip() if supplier_gst_match else "Not Found"
     
@@ -181,7 +174,6 @@ def extract_general_fields(rows, regions):
         if match:
             fields[field] = next(group for group in match.groups() if group is not None).strip()
             if field == "shipping_address":
-                # Clean up shipping address
                 fields[field] = re.sub(r'(?:seller|vendor|johnson\s*plc|tax\s*id\s*[:\s]*[\d-]+|iban\s*[:\s]*.*?$|abn\s*[\d\s]+)', '', fields[field], flags=re.IGNORECASE).strip()
         else:
             fields[field] = "Not Found"
@@ -189,7 +181,6 @@ def extract_general_fields(rows, regions):
     return fields
 
 def extract_vendor_customer_info(rows, regions):
-    """Extract vendor and customer information using spatial regions."""
     vendor_info = {
         "company_name": "Not Found",
         "address": [],
@@ -201,7 +192,6 @@ def extract_vendor_customer_info(rows, regions):
         "address": []
     }
     
-    # Vendor info
     vendor_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["vendor"]])
     company_pattern = r"(?:[A-Za-z\s]+\s*(?:Pty\. Ltd\.|Inc\.|LLC|PLC|WOODWORK))|(?:[A-Za-z\s]+Equipment)"
     phone_pattern = r"(?:\+\d{1,3}\s*)?(?:\d{1,4}[\s-])?\d{3}[\s-]\d{3}[\s-]\d{4}|\d{10}|\(\d{2,3}\)\s*\d{7,8}"
@@ -227,7 +217,6 @@ def extract_vendor_customer_info(rows, regions):
                 address_lines.append(row_text.strip())
     vendor_info["address"] = address_lines if address_lines else ["Not Found"]
     
-    # Customer info
     customer_text = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["customer"]])
     customer_name_pattern = r"(?:bill\s*to|ship\s*to|customer\s*name\s*[:\s]*|client\s*[:\s]*|attention\s*to\s*)([A-Za-z\s-]+?)(?=\s*(?:tax\s*id|address|\d{3,}|$))"
     customer_name_match = re.search(customer_name_pattern, customer_text, re.IGNORECASE)
@@ -247,7 +236,6 @@ def extract_vendor_customer_info(rows, regions):
     return vendor_info, customer_info
 
 def extract_additional_info(rows, regions):
-    """Extract payment terms and bank details from footer region."""
     additional_info = {
         "payment_terms": "Not Found",
         "bank_details": {}
@@ -277,7 +265,6 @@ def extract_additional_info(rows, regions):
     return additional_info
 
 def extract_totals(rows, table_contents, regions):
-    """Extract total fields from rows after the table and compute subtotal from line items."""
     total_patterns = {
         "subtotal": r"(?:sub ?total|total before tax|net amount)\s*[:\-]?\s*\$?([\d.,]+)",
         "discount": r"(?:discount|less|deduction|deduct)\s*[:\-]?\s*\$?([\d.,]+)",
@@ -287,14 +274,12 @@ def extract_totals(rows, table_contents, regions):
     }
     
     totals = {}
-    # Initialize totals
     totals['subtotal'] = 0.0
     totals['gst'] = 0.0
     totals['discount'] = 0.0
     totals['final_total'] = 0.0
     totals['summary_totals'] = 0.0
     
-    # Compute from table contents if available
     if table_contents:
         subtotal = sum(item.get('net_worth', item.get('total_amount', 0.0)) for item in table_contents)
         totals['subtotal'] = subtotal
@@ -304,7 +289,6 @@ def extract_totals(rows, table_contents, regions):
                 gst += (item['vat'] / 100) * item['net_worth']
         totals['gst'] = round(gst, 2)
     
-    # Extract totals from footer
     text_after_table = ' '.join([' '.join([e['text'] for e in rows[i]]) for i in regions["footer"]])
     for field, pattern in total_patterns.items():
         match = re.search(pattern, text_after_table, re.IGNORECASE)
@@ -328,7 +312,6 @@ def extract_totals(rows, table_contents, regions):
     return totals
 
 def parse_invoice_data(all_elements):
-    """Parse invoice data from OCR elements across all pages."""
     invoice_data = {
         "general_information": {},
         "vendor_information": {},
