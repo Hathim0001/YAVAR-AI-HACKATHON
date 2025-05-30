@@ -3,7 +3,6 @@ import numpy as np
 from typing import Dict
 
 def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
-    """Perform comprehensive verifiability checks"""
     report = {
         "field_verification": {},
         "line_items_verification": [],
@@ -11,7 +10,6 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
         "summary": {"issues": []}
     }
     
-    # Field confidence calculation
     fields = [
         "invoice_number", "invoice_date", "supplier_gst_number",
         "bill_to_gst_number", "po_number", "shipping_address",
@@ -23,7 +21,6 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
         present = value is not None and value != "Not Found" and value != 0.0
         
         if present:
-            # Calculate confidence based on component words
             words = str(value).split()
             word_confs = [confidences.get(word, 0.7) for word in words if word in confidences]
             confidence = np.mean(word_confs) if word_confs else 0.85
@@ -35,14 +32,12 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
             "present": present
         }
     
-    # Line item validation
     for i, item in enumerate(invoice_data.get("table_contents", [])):
         try:
             qty = item.get("quantity", 0)
             unit_price = item.get("unit_price", 0)
             total = item.get("total_amount", 0)
             
-            # Calculate expected total
             calculated_total = round(qty * unit_price, 2)
             check_passed = abs(calculated_total - total) < 0.01
             
@@ -55,7 +50,6 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
                 }
             })
             
-            # Record issues
             if not check_passed:
                 report["summary"]["issues"].append(
                     f"Line {i+1} total mismatch: {total} vs {calculated_total}"
@@ -63,16 +57,13 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
         except Exception as e:
             report["summary"]["issues"].append(f"Line {i+1} error: {str(e)}")
     
-    # Total calculations verification
     try:
-        # Calculate subtotal from line items
         subtotal_calc = sum(item["total_amount"] for item in invoice_data.get("table_contents", []))
         subtotal_ext = invoice_data.get("subtotal", 0)
         discount = invoice_data.get("discount", 0) or 0
         gst = invoice_data.get("gst", 0) or 0
         final_total_ext = invoice_data.get("final_total", 0)
         
-        # Calculate final total
         final_total_calc = subtotal_calc - discount + gst
         
         report["total_calculations_verification"] = {
@@ -96,7 +87,6 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
             }
         }
         
-        # Record issues
         if not report["total_calculations_verification"]["subtotal_check"]["check_passed"]:
             report["summary"]["issues"].append(
                 f"Subtotal mismatch: {subtotal_ext} vs {subtotal_calc}"
@@ -110,7 +100,6 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
     except Exception as e:
         report["summary"]["issues"].append(f"Total calculation error: {str(e)}")
     
-    # Summary statistics
     report["summary"]["all_fields_present"] = all(
         report["field_verification"][f]["present"] 
         for f in ["invoice_number", "invoice_date", "final_total"]
