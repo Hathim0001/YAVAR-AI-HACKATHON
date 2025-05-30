@@ -21,49 +21,33 @@
             "present": false
         },
         "shipping_address": {
-            "confidence": 0.95,
+            "confidence": 0.9,
             "present": true
         },
-        "seal_and_sign_present": {
+        "subtotal": {
             "confidence": 0.0,
             "present": false
+        },
+        "discount": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "gst": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "final_total": {
+            "confidence": 0.9,
+            "present": true
         }
     },
     "line_items_verification": [],
-    "total_calculations_verification": {
-        "subtotal_check": {
-            "calculated_value": 0,
-            "extracted_value": 0.0,
-            "check_passed": true
-        },
-        "discount_check": {
-            "calculated_value": 0.0,
-            "extracted_value": 0.0,
-            "check_passed": true
-        },
-        "gst_check": {
-            "calculated_value": 0.0,
-            "extracted_value": 0.0,
-            "check_passed": true
-        },
-        "final_total_check": {
-            "calculated_value": 0.0,
-            "extracted_value": 39.6,
-            "check_passed": false
-        }
-    },
+    "total_calculations_verification": {},
     "summary": {
-        "all_fields_confident": false,
-        "all_line_items_verified": true,
-        "totals_verified": false,
         "issues": [
-            "Low confidence for invoice_number: 0.0",
-            "Low confidence for invoice_date: 0.0",
-            "Low confidence for supplier_gst_number: 0.0",
-            "Low confidence for bill_to_gst_number: 0.0",
-            "Low confidence for po_number: 0.0",
-            "Low confidence for seal_and_sign_present: 0.0",
-            "Total calculations mismatch"
-        ]
+            "Total calculation error: 'list' object has no attribute 'get'"
+        ],
+        "all_fields_present": false,
+        "all_line_items_valid": true
     }
 }
