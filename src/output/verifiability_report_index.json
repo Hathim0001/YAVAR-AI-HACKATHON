@@ -1,0 +1,130 @@
+{
+    "field_verification": {
+        "invoice_number": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "invoice_date": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "supplier_gst_number": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "bill_to_gst_number": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "po_number": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "shipping_address": {
+            "confidence": 0.0,
+            "present": false
+        },
+        "seal_and_sign_present": {
+            "confidence": 0.0,
+            "present": false
+        }
+    },
+    "line_items_verification": [
+        {
+            "row": 1,
+            "serial_number_confidence": 0.0,
+            "description_confidence": 0.0,
+            "hsn_sac_confidence": 0.0,
+            "quantity_confidence": 0.0,
+            "unit_price_confidence": 0.0,
+            "total_amount_confidence": 0.0,
+            "line_total_check": {
+                "calculated_value": 0.0,
+                "extracted_value": 0.0,
+                "check_passed": true
+            }
+        },
+        {
+            "row": 2,
+            "serial_number_confidence": 0.0,
+            "description_confidence": 0.0,
+            "hsn_sac_confidence": 0.0,
+            "quantity_confidence": 0.0,
+            "unit_price_confidence": 0.0,
+            "total_amount_confidence": 0.0,
+            "line_total_check": {
+                "calculated_value": 0.0,
+                "extracted_value": 0.0,
+                "check_passed": true
+            }
+        },
+        {
+            "row": 3,
+            "serial_number_confidence": 0.0,
+            "description_confidence": 0.0,
+            "hsn_sac_confidence": 0.0,
+            "quantity_confidence": 0.0,
+            "unit_price_confidence": 0.0,
+            "total_amount_confidence": 0.0,
+            "line_total_check": {
+                "calculated_value": 0.0,
+                "extracted_value": 0.0,
+                "check_passed": true
+            }
+        }
+    ],
+    "total_calculations_verification": {
+        "subtotal_check": {
+            "calculated_value": 0.0,
+            "extracted_value": 0.0,
+            "check_passed": true
+        },
+        "discount_check": {
+            "calculated_value": 0.0,
+            "extracted_value": 0.0,
+            "check_passed": true
+        },
+        "gst_check": {
+            "calculated_value": 0.0,
+            "extracted_value": 0.0,
+            "check_passed": true
+        },
+        "final_total_check": {
+            "calculated_value": 0.0,
+            "extracted_value": 0.0,
+            "check_passed": true
+        }
+    },
+    "summary": {
+        "all_fields_confident": false,
+        "all_line_items_verified": true,
+        "totals_verified": true,
+        "issues": [
+            "Low confidence for invoice_number: 0.0",
+            "Low confidence for invoice_date: 0.0",
+            "Low confidence for supplier_gst_number: 0.0",
+            "Low confidence for bill_to_gst_number: 0.0",
+            "Low confidence for po_number: 0.0",
+            "Low confidence for shipping_address: 0.0",
+            "Low confidence for seal_and_sign_present: 0.0",
+            "Low confidence in row 1, serial: 0.0",
+            "Low confidence in row 1, description: 0.0",
+            "Low confidence in row 1, hsn: 0.0",
+            "Low confidence in row 1, quantity: 0.0",
+            "Low confidence in row 1, unit: 0.0",
+            "Low confidence in row 1, total: 0.0",
+            "Low confidence in row 2, serial: 0.0",
+            "Low confidence in row 2, description: 0.0",
+            "Low confidence in row 2, hsn: 0.0",
+            "Low confidence in row 2, quantity: 0.0",
+            "Low confidence in row 2, unit: 0.0",
+            "Low confidence in row 2, total: 0.0",
+            "Low confidence in row 3, serial: 0.0",
+            "Low confidence in row 3, description: 0.0",
+            "Low confidence in row 3, hsn: 0.0",
+            "Low confidence in row 3, quantity: 0.0",
+            "Low confidence in row 3, unit: 0.0",
+            "Low confidence in row 3, total: 0.0"
+        ]
+    }
+}
