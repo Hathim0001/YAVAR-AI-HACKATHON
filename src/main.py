@@ -1,5 +1,4 @@
 import os
-import cv2
 import numpy as np
 from pdf2image import convert_from_path
 from PIL import Image
@@ -26,37 +25,35 @@ def process_pdf(pdf_path, output_dir):
         base_name = os.path.splitext(os.path.basename(pdf_path))[0]
         logging.info(f"Processing {base_name}.pdf")
         images = convert_from_path(pdf_path, dpi=200)
-        
         all_elements = []
-        last_image = None
+        confidences = {}
+        first_image = None
         for i, image in enumerate(images):
             logging.info(f"Processing page {i+1}")
             image_np = np.array(image)
-            
             preprocessed = preprocess_image(image_np)
             if preprocessed is None or preprocessed.size == 0:
                 logging.error("Preprocessing returned an empty image.")
                 raise ValueError("Preprocessing failed: Empty image")
-            
             elements = extract_text_with_positions(preprocessed)
             if not elements:
                 logging.warning(f"No text elements extracted from page {i+1}.")
+            for elem in elements:
+                confidences[elem['text']] = elem['confidence']
             all_elements.append(elements)
-            
-            last_image = image_np
-        
+            if i == 0:
+                first_image = image_np
         if not any(all_elements):
             logging.error("No text elements extracted from any page.")
             raise ValueError("OCR failed: No text extracted")
-        
-        invoice_data = parse_invoice_data(all_elements)
+        if first_image is None:
+            logging.error("No images processed.")
+            raise ValueError("No valid images available")
+        invoice_data = parse_invoice_data(all_elements, first_image, base_name, output_dir)
         if not invoice_data["table_contents"]:
             logging.warning("No table contents extracted.")
-        
-        verifiability_report = perform_verifiability_checks(invoice_data, all_elements)
-        
-        save_outputs(invoice_data, verifiability_report, last_image, output_dir, base_name)
-        
+        verifiability_report = perform_verifiability_checks(invoice_data, confidences)
+        save_outputs(invoice_data, verifiability_report, first_image, output_dir, base_name)
         logging.info(f"Processed {base_name}.pdf successfully")
         return True
     except Exception as e:
@@ -65,15 +62,12 @@ def process_pdf(pdf_path, output_dir):
 
 def main():
     pdf_files = [f for f in os.listdir(INPUT_DIR) if f.lower().endswith(".pdf")]
-    
     if not pdf_files:
         logging.error(f"No PDF files found in '{INPUT_DIR}'")
         raise FileNotFoundError(f"No PDF files found in '{INPUT_DIR}'")
-    
     for pdf_file in pdf_files:
         pdf_path = os.path.join(INPUT_DIR, pdf_file)
         process_pdf(pdf_path, OUTPUT_DIR)
-    
     logging.info("Processing complete. Check output directory for results.")
 
 if __name__ == "__main__":

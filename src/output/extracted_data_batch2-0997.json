@@ -6,7 +6,8 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Not Found",
-        "seal_and_sign_present": false
+        "seal_and_sign_present": true,
+        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch2-0997_logo.png"
     },
     "vendor_information": {
         "company_name": "T DISTRIBUTORS INC.",
@@ -15,7 +16,7 @@
             "-",
             "VAUGHN, Ontario, Canada",
             "1",
-            "3 $103.00",
+            "3 $103.00 $309",
             "Permabond 106",
             "Cyanoacrylate 1-0z",
             "10 bottles/case",
@@ -26,7 +27,7 @@
             "2:16",
             "cartridges/box | 120",
             "cartridges/case",
-            "3",
+            "3 GP",
             "Duallock",
             ">15.00 >60",
             "BLACK GP PSA",

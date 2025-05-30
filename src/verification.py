@@ -17,8 +17,8 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
     ]
     
     for field in fields:
-        value = (invoice_data.get("general_information", {}).get(field) or
-                 invoice_data.get("totals", {}).get(field))
+        value = (invoice_data["general_information"].get(field) or
+                 invoice_data["totals"].get(field))
         present = (value is not None and 
                   value != "Not Found" and 
                   not (isinstance(value, (int, float)) and value == 0.0) and
@@ -85,10 +85,10 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
     try:
         subtotal_calc = sum(float(item["total_amount"]) 
                           for item in invoice_data.get("table_contents", []))
-        subtotal_ext = float(invoice_data.get("totals", {}).get("subtotal", 0.0))
-        discount = float(invoice_data.get("totals", {}).get("discount", 0.0))
-        gst = float(invoice_data.get("totals", {}).get("gst", 0.0))
-        final_total_ext = float(invoice_data.get("totals", {}).get("final_total", 0.0))
+        subtotal_ext = float(invoice_data["totals"].get("subtotal", 0.0))
+        discount = float(invoice_data["totals"].get("discount", 0.0))
+        gst = float(invoice_data["totals"].get("gst", 0.0))
+        final_total_ext = float(invoice_data["totals"].get("final_total", 0.0))
         
         final_total_calc = round(subtotal_calc - discount + gst, 2)
         
@@ -114,7 +114,7 @@ def perform_verifiability_checks(invoice_data: Dict, confidences: Dict) -> Dict:
                 "present": gst > 0,
                 "confidence": round(gst_conf, 2)
             },
-            "final_total": {
+            "final_total_check": {
                 "calculated_value": round(final_total_calc, 2),
                 "extracted_value": round(final_total_ext, 2),
                 "check_passed": abs(final_total_calc - final_total_ext) <= 0.01,

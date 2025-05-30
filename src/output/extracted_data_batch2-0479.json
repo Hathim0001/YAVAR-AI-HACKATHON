@@ -6,17 +6,18 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Not Found",
-        "seal_and_sign_present": false
+        "seal_and_sign_present": true,
+        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch2-0479_logo.png"
     },
     "vendor_information": {
         "company_name": "Not Found",
         "address": [
             "# Description Quantity Price Total",
-            "3M 3762LM-PG Hot Melt TAN 1\u00b0 22",
+            "3M 3762LM-PG Hot Melt TAN 1\u00b0 3\u00b0 22",
             "x",
             "01 $14.00 $28.00",
             "Nitrile 18756 Medical Glove BLK Medium",
-            "$16.00 $64.00",
+            "Us $16.00 $64.00",
             "Powder/Latex Free | 100/BX",
             "03 Loctite 4061 Instant Adh 20gm 10/case 5 $20.00 $100.00",
             "Polyimide Tape 36yd Imil Amber | 96",

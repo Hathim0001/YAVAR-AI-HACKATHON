@@ -42,10 +42,33 @@
         }
     },
     "line_items_verification": [],
-    "total_calculations_verification": {},
+    "total_calculations_verification": {
+        "subtotal_check": {
+            "calculated_value": 0,
+            "extracted_value": 0.0,
+            "check_passed": true,
+            "confidence": 0.9
+        },
+        "discount_check": {
+            "extracted_value": 0.0,
+            "present": false,
+            "confidence": 0.9
+        },
+        "gst_check": {
+            "extracted_value": 0.0,
+            "present": false,
+            "confidence": 0.9
+        },
+        "final_total_check": {
+            "calculated_value": 0.0,
+            "extracted_value": 1616.0,
+            "check_passed": false,
+            "confidence": 0.9
+        }
+    },
     "summary": {
         "issues": [
-            "Total calculation error: 'list' object has no attribute 'get'"
+            "Final total mismatch: 1616.0 vs 0.0"
         ],
         "all_fields_present": false,
         "all_line_items_valid": true

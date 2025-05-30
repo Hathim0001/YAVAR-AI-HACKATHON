@@ -1,11 +1,11 @@
 {
     "field_verification": {
         "invoice_number": {
-            "confidence": 0.9,
+            "confidence": 0.96,
             "present": true
         },
         "invoice_date": {
-            "confidence": 0.9,
+            "confidence": 0.96,
             "present": true
         },
         "supplier_gst_number": {
@@ -21,7 +21,7 @@
             "present": false
         },
         "shipping_address": {
-            "confidence": 0.9,
+            "confidence": 0.93,
             "present": true
         },
         "subtotal": {
@@ -59,7 +59,7 @@
             "present": false,
             "confidence": 0.9
         },
-        "final_total": {
+        "final_total_check": {
             "calculated_value": 0.0,
             "extracted_value": 0.0,
             "check_passed": true,
@@ -67,9 +67,7 @@
         }
     },
     "summary": {
-        "issues": [
-            "Total calculation error: 'final_total_check'"
-        ],
+        "issues": [],
         "all_fields_present": false,
         "all_line_items_valid": true
     }

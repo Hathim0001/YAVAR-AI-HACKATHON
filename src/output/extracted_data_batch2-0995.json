@@ -6,7 +6,8 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Wolfe, Robles and Jones Stevens PLC 08133 Bruce Squares 999 Julie Overpass Apt. 189 : Client: Wolfe, Robles and Jones Stevens PLC 08133 Bruce Squares 999 Julie Overpass Apt. 189 Shannonfort, ID 98587 Stephenton, GA 33964",
-        "seal_and_sign_present": false
+        "seal_and_sign_present": true,
+        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch2-0995_logo.png"
     },
     "vendor_information": {
         "company_name": "Not Found",

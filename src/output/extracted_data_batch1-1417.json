@@ -1,0 +1,47 @@
+{
+    "general_information": {
+        "invoice_date": "08/24/2015",
+        "invoice_number": "28768109",
+        "supplier_gst_number": "Not Found",
+        "bill_to_gst_number": "Not Found",
+        "po_number": "Not Found",
+        "shipping_address": "Potts, Gray and Tucker Harris-Harrell 776 Jeffrey Rest 51390 Kristina Viaduct Suite 245 : Client: Potts, Gray and Tucker Harris-Harrell 776 Jeffrey Rest 51390 Kristina Viaduct Suite 245 East James, NV 54663 South Markhaven, DE 79196",
+        "seal_and_sign_present": true,
+        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch1-1417_logo.png"
+    },
+    "vendor_information": {
+        "company_name": "Not Found",
+        "address": [
+            "Not Found"
+        ],
+        "phone": "Not Found",
+        "website": "Not Found"
+    },
+    "customer_information": {
+        "customer_name": "Not Found",
+        "address": [
+            "Potts, Gray and Tucker Harris-Harrell",
+            "Rack 3-Pack Stackable Display",
+            "and Fridge Storage S..."
+        ]
+    },
+    "table_contents": [],
+    "no_items": 0,
+    "totals": {
+        "subtotal": 0.0,
+        "gst": 0.0,
+        "discount": 0.0,
+        "final_total": 0.0,
+        "summary_totals": 0.0
+    },
+    "additional_information": {
+        "payment_terms": "Not Found",
+        "bank_details": {
+            "account_name": "Not Found",
+            "bank_name": "Not Found",
+            "account_number": "Not Found",
+            "swift_code": "Not Found",
+            "iban": "Not Found"
+        }
+    }
+}

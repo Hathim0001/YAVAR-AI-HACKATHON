@@ -102,7 +102,7 @@
             "present": false,
             "confidence": 0.9
         },
-        "final_total": {
+        "final_total_check": {
             "calculated_value": 0.0,
             "extracted_value": 0.0,
             "check_passed": true,
@@ -110,9 +110,7 @@
         }
     },
     "summary": {
-        "issues": [
-            "Total calculation error: 'final_total_check'"
-        ],
+        "issues": [],
         "all_fields_present": false,
         "all_line_items_valid": true
     }
