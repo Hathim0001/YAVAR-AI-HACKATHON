@@ -6,8 +6,7 @@
         "bill_to_gst_number": "Not Found",
         "po_number": "Not Found",
         "shipping_address": "Potts, Gray and Tucker Harris-Harrell 776 Jeffrey Rest 51390 Kristina Viaduct Suite 245 : Client: Potts, Gray and Tucker Harris-Harrell 776 Jeffrey Rest 51390 Kristina Viaduct Suite 245 East James, NV 54663 South Markhaven, DE 79196",
-        "seal_and_sign_present": true,
-        "logo_path": "D:\\YAVAR-AI-HACKATHON\\src\\output\\batch1-1417_logo.png"
+        "seal_and_sign_present": false
     },
     "vendor_information": {
         "company_name": "Not Found",
